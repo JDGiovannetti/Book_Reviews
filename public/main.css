@@ -1,0 +1,7 @@
+@media (max-width: 767px) {
+    .img-max {
+      max-width: 10%; /* or whatever you feel looks good */
+      margin: 0 auto; /* This centers it */
+    }
+  }
+  
