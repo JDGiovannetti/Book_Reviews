@@ -9,6 +9,7 @@ const app = express();
 app.use(bp.urlencoded({extended: true}));
 app.use(express.static("public"));
 
+// connect to database
 const db = new pg.Client(
 {   user: "postgres",
     password: "super",
@@ -18,27 +19,36 @@ const db = new pg.Client(
 });
 db.connect();
 
+// home page 
 app.get("/", async (req, res) => {
     try {
         const result = await db.query('SELECT * FROM books ORDER BY id DESC');
-        const books = result.rows; // Assuming 'rows' holds your book data; adjust based on your DB client
-        res.render("index.ejs", {books: books}); // Make sure 'index' points to your EJS file correctly
+        const books = result.rows; 
+        res.render("index.ejs", {books: books}); 
     } catch (error) {
         console.error('Error fetching books:', error);
         res.send("Error fetching books");
     }
 })
 
+// get notes when user clicks on title
 app.get("/notes/:id", (req, res) => {
+    const book_id = req.params.id;
     let book_info = {
 
     }
-
-    res.redirect('/');
 })
 
+// add books
+app.get("/add", (req, res) => {
+    res.render('add.ejs')
+});
+
+app.post
+
+// edit an already existing entry's details
 app.get("/edit/:id", (req, res) => {
-    console.log('we edit this hoe');
+    console.log(req.params.id);
     res.redirect('/');
 })
 
