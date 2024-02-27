@@ -18,11 +18,11 @@
                 <!-- Book Item -->
                 <div class="row mb-5 pb-5">
                     <div class="col-md-2 img-max">
-                        <img class="img-fluid" src="https://covers.openlibrary.org/b/isbn/<%=books[i].isbn%>-L.jpg" alt="Book Title" >
+                        <img class="img-fluid" src="https://covers.openlibrary.org/b/isbn/<%=books[i].isbn%>-L.jpg" alt="<%= books[i].title %> Cover" >
                     </div>
                     <div class="col-md-10 pt-3 text-div">
                         <a class = "btn btn-outline-primary edit-button btn-lg" href="/edit/<%= books[i].id %>">Edit</a>
-                        <h2><a href="/notes/<%= books[i].id %>"><%= books[i].title %></a></h4>
+                        <h2><a href="/notes/<%= books[i].id %>"><%= books[i].title %></a></h2>
                         <p class = "fs-4 fw-light">Author: <%= books[i].author %> </p>
                         <p class = "fs-4 fw-light">Rating: <%= books[i].rating %>/10</p>
                         <p class = "fs-4 fw-light"><%= books[i].summary %></p>
