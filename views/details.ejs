@@ -3,20 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>book title Details</title>
+    <title>Book Details</title>
+    <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 </head>
 <body>
-    <form action="/" method="GET">
-        <button class="btn btn-error" type="submit">< Back</button>
-    </form>
     <div class="m-5">
-        <img class="img-fluid mb-3" src="https://covers.openlibrary.org/b/isbn/<%=book.isbn%>-L.jpg" alt="">
+        <div class="back-button-container">
+            <form action="/" method="GET">
+                <button class="btn btn-outline-danger mb-3" type="submit">< Back</button>
+            </form>
+        </div>
+        <img class="img-fluid mb-3" src="https://covers.openlibrary.org/b/isbn/<%=book.isbn%>-L.jpg" alt="Book Cover">
         <h1><%= book.title %></h1>
-        <p class = "fs-4 fw-light">Author: <%= book.author %> </p>
-        <p class = "fs-4 fw-light">Rating: <%= book.rating %>/10</p>
-        <p class = "fs-4 fw-normal"><%= book.notes_and_rev %></p>
+        <p class="fs-4 fw-light">Author: <%= book.author %></p>
+        <p class="fs-4 fw-light">Rating: <%= book.rating %>/10</p>
+        <p class="fs-4 fw-normal note-paragraph"><%= book.notes_and_rev %></p>
     </div>
-
 </body>
 </html>

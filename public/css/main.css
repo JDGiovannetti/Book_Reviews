@@ -7,4 +7,7 @@
 .text-div {
     position: relative;
 }
-  
+
+.note-paragraph {
+    white-space: pre-wrap;
+}

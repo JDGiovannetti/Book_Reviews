@@ -6,8 +6,8 @@ import axios from "axios";
 const PORT = 3000;
 const app = express();
 
-app.use(bp.urlencoded({extended: true}));
 app.use(express.static("public"));
+app.use(bp.urlencoded({extended: true}));
 
 // connect to database
 const db = new pg.Client(
@@ -29,17 +29,17 @@ app.get("/", async (req, res) => {
         console.error('Error fetching books:', error);
         res.send("Error fetching books");
     }
-})
+});
 
 // get notes when user clicks on title
 app.get("/notes/:id", async (req, res) => {
+    debugger;
     const book_id = req.params.id;
     const query_result = await db.query("SELECT isbn, title, rating, author, notes_and_rev FROM books INNER JOIN book_info ON book_info.id = books.id WHERE book_info.id = $1", 
     [book_id]);
     let book_info = query_result.rows[0];
-    console.log(book_info);
     res.render("details.ejs", {book: book_info});
-})
+});
 
 // add books page
 app.get("/add", (req, res) => {
@@ -61,16 +61,77 @@ app.post("/add", async (req, res) => {
         console.error(error);
         res.send("There was an error adding the book!");
     }
-})
+});
 
 // edit an already existing entry's details
+// send to edit page
 app.get("/edit/:id", async (req, res) => {
+    const book_id = req.params.id;
+    // get all the info for the book so we can display them in the edit window
+    const query_result = await db.query("SELECT books.id, isbn, title, rating, author, summary, notes_and_rev FROM books INNER JOIN book_info ON book_info.id = books.id WHERE book_info.id = $1", 
+    [book_id]);
+    const book_info = query_result.rows[0];
+
+    res.render('edit.ejs', {book: book_info});
+});
+// edit values in database based on what has changed
+app.post("/edit/:id", async (req, res) => {
     const book_id = req.params.id;
     const query_result = await db.query("SELECT isbn, title, rating, author, summary, notes_and_rev FROM books INNER JOIN book_info ON book_info.id = books.id WHERE book_info.id = $1", 
     [book_id]);
-    const book_info = query_result.rows[0];
-    res.render('edit.ejs', {book: book_info});
-})
+    const book_info_res = query_result.rows[0];
+
+    let newquery = "UPDATE books SET ";
+    let values = [];
+    let paramCount = 1; // updates "$1 -> $2 -> $3" based on number of params gotten from the request
+    // checking against current values in the database to see what has changed
+
+    console.log(req.body);
+    if(req.body.title != book_info_res.title) {
+        newquery += `title=$${paramCount}, `
+        values.push(req.body.title);
+        paramCount++;
+    }
+
+    if(req.body.author != book_info_res.author) {
+        newquery += `author=$${paramCount}, `
+        values.push(req.body.author);
+        paramCount++;
+    }
+
+    if(req.body.rating != book_info_res.rating) {
+        newquery += `rating=$${paramCount}, `
+        values.push(req.body.rating);
+        paramCount++;
+    }
+
+    if(req.body.shortDescription != book_info_res.summary) {
+        newquery += `summary=$${paramCount}, `
+        values.push(req.body.shortDescription);
+        paramCount++;
+    }
+
+    if(req.body.isbn != book_info_res.isbn) {
+        newquery += `isbn=$${paramCount}, `
+        values.push(req.body.isbn);
+        paramCount++;
+    }
+
+    // separate query to update book_info table
+    if(req.body.reviewNotes != book_info_res.notes_and_rev) {
+        db.query("UPDATE book_info SET notes_and_rev=$1 WHERE id=$2", [req.body.reviewNotes, book_id]);
+    }
+
+    newquery = newquery.slice(0,-2); // remove last comma and space
+    newquery += ` WHERE books.id = ${book_id}`;
+    if(values.length != 0) {
+        // query the database
+        db.query(newquery, values);
+    }
+
+    res.redirect("/");
+
+});
 
 
 app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
