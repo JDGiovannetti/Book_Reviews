@@ -1,13 +1,24 @@
+.delete-form {
+    position: absolute;
+    top:10px;
+    right: 0px;
+}
+
 .edit-button {
     position: absolute;
     top: 10px;
     right: 10px;
 }
 
-.text-div {
+.edit-heading-div {
     position: relative;
 }
 
 .note-paragraph {
     white-space: pre-wrap;
 }
+
+.text-div {
+    position: relative;
+}
+

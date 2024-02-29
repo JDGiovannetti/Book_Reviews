@@ -31,17 +31,7 @@ app.get("/", async (req, res) => {
     }
 });
 
-// get notes when user clicks on title
-app.get("/notes/:id", async (req, res) => {
-    debugger;
-    const book_id = req.params.id;
-    const query_result = await db.query("SELECT isbn, title, rating, author, notes_and_rev FROM books INNER JOIN book_info ON book_info.id = books.id WHERE book_info.id = $1", 
-    [book_id]);
-    let book_info = query_result.rows[0];
-    res.render("details.ejs", {book: book_info});
-});
-
-// add books page
+// show add books page
 app.get("/add", (req, res) => {
     res.render('add.ejs')
 });
@@ -61,6 +51,16 @@ app.post("/add", async (req, res) => {
         console.error(error);
         res.send("There was an error adding the book!");
     }
+});
+
+// get notes when user clicks on title
+app.get("/notes/:id", async (req, res) => {
+    debugger;
+    const book_id = req.params.id;
+    const query_result = await db.query("SELECT isbn, title, rating, author, notes_and_rev FROM books INNER JOIN book_info ON book_info.id = books.id WHERE book_info.id = $1", 
+    [book_id]);
+    let book_info = query_result.rows[0];
+    res.render("details.ejs", {book: book_info});
 });
 
 // edit an already existing entry's details
@@ -124,14 +124,23 @@ app.post("/edit/:id", async (req, res) => {
 
     newquery = newquery.slice(0,-2); // remove last comma and space
     newquery += ` WHERE books.id = ${book_id}`;
-    if(values.length != 0) {
-        // query the database
+    // if we actually made any changes then query the database
+    if(values.length != 0) { 
         db.query(newquery, values);
     }
 
     res.redirect("/");
 
 });
+
+app.post("/delete/:id", async (req, res) => {
+    const book_id = req.params.id;
+
+    db.query("DELETE FROM books WHERE id = $1", [book_id]);
+    db.query("DELETE FROM book_info WHERE id = $1", [book_id]);
+
+    res.redirect("/");
+})
 
 
 app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
