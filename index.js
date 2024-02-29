@@ -1,7 +1,6 @@
 import bp from "body-parser";
 import pg from "pg";
 import express from "express";
-import axios from "axios";
 
 const PORT = 3000;
 const app = express();
